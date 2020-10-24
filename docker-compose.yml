@@ -1,0 +1,12 @@
+version: '3.7'
+
+services:
+  backend:
+    build: ./docker/backend/
+    image: all_in_one:backend-0.1
+    working_dir: /src
+    ports:
+      - 81:3000
+    volumes:
+      - ./backend:/src
+    command: ["npm", "run", "dev"]
