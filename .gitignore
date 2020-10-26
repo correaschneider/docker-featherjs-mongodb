@@ -1,0 +1,5 @@
+# environment
+.env
+
+# mongo
+docker/mongo/data

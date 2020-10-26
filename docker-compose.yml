@@ -4,9 +4,38 @@ services:
   backend:
     build: ./docker/backend/
     image: all_in_one:backend-0.1
-    working_dir: /src
+    environment:
+      - API_HOST=${API_HOST}
+      - API_PORT=${API_PORT}
+      - DB_HOST=mongo
+      - DB_PORT=27017
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+    depends_on:
+      - mongo
     ports:
-      - 81:3000
+      - 81:${API_PORT}
+    working_dir: /src
     volumes:
       - ./backend:/src
+    # command: ["npm", "i"]
     command: ["npm", "run", "dev"]
+
+  mongo:
+    build:
+      context: ./docker/mongo/
+      dockerfile: Dockerfile
+      args:
+        - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+        - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+        - DB_NAME=${DB_NAME}
+        - DB_USER=${DB_USER}
+        - DB_PASSWORD=${DB_PASSWORD}
+    image: all_in_one:mongo-0-1
+    restart: always
+    volumes:
+      - ./docker/mongo/data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
